@@ -49,7 +49,28 @@ Amplicon Classifier: https://github.com/jluebeck/AmpliconClassifier <br>
     - Next, run Amplicon Suite using Singularity. The arguments are the same as listed above. <br>
         - Example run using Singularity: `singularity exec amplicon-architect_v2.4.sif python3 /opt/genepatt/run_aa.py --input /home/user/edwin5588/SRR8788972_1.fastq /home/user/edwin5588/SRR8788972_2.fastq --n_threads 4 --reference GRCh38 --file_prefix SRR8788972 --RUN_AA Yes --RUN_AC Yes`
         - Example run using Singularity, mounting a local data directory: <br> `singularity exec --bind /local_data:/mount_dir amplicon-architect_v2.4.sif python3 /opt/genepatt/run_aa.py --input /mount_dir/SRR8788972_1.fastq /mount_dir/SRR8788972_2.fastq --n_threads 4 --reference GRCh38 --file_prefix SRR8788972 --RUN_AA Yes --RUN_AC Yes`
-        
+
+# How to update in case there's a new version of PAA
+- Steps:
+ 1. Clone this repo.
+ 2. In the Dockerfile, replace the base image (FROM jluebeck/prepareaa:tag) with the latest tag.
+ 3. Docker build, tag, push to genepattern/amplicon-architect.
+ 4. Update the manifest, and make a Jenkins release
+
+    
+# How to replace Mosek license
+- Mosek license has to be replaced every year. We need a new license for it every year and it's copied into the docker image.
+- The mosek license used to be on the GPUcsd server, but because AmpliconSuite also has to be ran on Cloud, it was decided it's easier to include it in the Docker image instead so we don't have to do this process on two servers. 
+- Steps:
+  1. Download the new mosek license.
+  2. Clone this repo. 
+  3. Copy mosek.lic into the src directory. 
+  4. Uncomment lines 21-22 in the dockerfile.
+  5. Build Docker image.
+  6. Tag and push to genepattern/amplicon-architect
+  7. Update Manifest with new image tag
+  8. Do a Jenkins release
+
 
 # Dependencies and Versioning
 - Uses Docker Image: genepattern/amplicon-architect:v2.11
