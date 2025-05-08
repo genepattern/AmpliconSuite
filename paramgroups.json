@@ -80,6 +80,14 @@
             "sample_description"
         ]
     },
+  {
+        "name": "Mosek license",
+        "description": "If the license on the genepattern server at <mosek_server_license> is absent or invalid, you can provide one here.",
+        "hidden": true,
+        "parameters": [
+            "mosek_license_file",
+         ]
+},
     {
         "name": "Job Options: Set to higher limit if running data that is >10x coverage."
     }

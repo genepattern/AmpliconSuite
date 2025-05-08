@@ -313,7 +313,10 @@ if __name__ == "__main__":
                         "3.0)", metavar="FLOAT", type=float, default=3.0)
     parser.add_argument("--no_filter", help="Do not run amplified_intervals.py to identify amplified seeds", type = str, default = 'No')
     parser.add_argument("--no_QC", help="Skip QC on the BAM file. Do not adjust AA insert_sdevs for poor-quality insert size distribution", type = str, default = 'No')
-    parser.add_argument("--path_to_mosek", help = "Server path to mosek license file", default = "/expanse/projects/mesirovlab/genepattern/servers/ucsd.prod/mosek/8/licenses/")
+    #parser.add_argument("--path_to_mosek", help = "Server path to mosek license file", default = "/expanse/projects/mesirovlab/genepattern/servers/ucsd.prod/mosek/8/licenses/")
+    parser.add_argument("--mosek_server_license", help = "Server path to mosek license file", default="/expanse/projects/mesirovlab/genepattern/servers/ucsd.prod/mosek/8/licenses/mosek.lic")
+    parser.add_argument("--mosek_license_file", help = "User provided mosek license file")
+ 
 
     ### Metadata arguments: 
     parser.add_argument("--metadata_sample_type")
@@ -325,12 +328,16 @@ if __name__ == "__main__":
     parser.add_argument("--metadata_number_of_AA_features")
     parser.add_argument("--metadata_sample_description")
 
-    
-
     args = parser.parse_args()
     print(f"using arguments: {args}")
     if args.reference == 'hg38':
         args.reference = "GRCh38"
+
+    # Set the value for args.path_to_mosek
+    if args.mosek_license_file:
+        args.path_to_mosek = os.path.dirname(args.mosek_license_file)
+    else:
+        args.path_to_mosek = os.path.dirname(args.mosek_server_license)
 
     ## to do: if txt, then find the samples, if not, then run AA on it. 
     ## 
