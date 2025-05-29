@@ -17,8 +17,8 @@ import pathlib
 global EXCLUSION_LIST
 EXCLUSION_LIST = ['.txt', '.bed', '.cns', '.out', '.pdf', '.log', '.stderr', '.json', '.tsv', '.cns.gz']
 global EXTENSIONS_LIST
-EXTENSIONS_LIST = ['.bam', '.R1.fastq.gz', '.R2.fastq.gz', '.zip', '.fq.gz', '1.fq.gz', '2.fq.gz', '.R1.fq.gz', '.R2.fq.gz', '1.fastq.gz', '2.fastq.gz', '.tar.gz']
-
+EXTENSIONS_LIST = ['.bam','_R1_001.fastq.gz','_R2_001.fastq.gz', '_R1.fastq', '_R2.fastq', '.R1.fastq.gz', '.R2.fastq.gz', '.zip', '.fq.gz', '1.fq.gz', '2.fq.gz', '.R1.fq.gz', '.R2.fq.gz', '1.fastq.gz', '2.fastq.gz', '.tar.gz']
+EXTENSIONS_LIST = sorted(EXTENSIONS_LIST, key=len, reverse=True) # Sort by length to match longer extensions first
 def run_paa(input_list, sample_name, args):
     """
     Runs Prepare AA.
@@ -30,7 +30,7 @@ def run_paa(input_list, sample_name, args):
 # }
 # 3. for each sample name, run AA on them, apply the rest of the parameters to each individual job
 # 4. if running using BAMs, run mulitthreaded
-    
+    print(f"in run_paa ... Input list is: {input_list}")
 
     RUN_COMMAND = f"python3 /home/programs/AmpliconSuite-pipeline-master/PrepareAA.py -s {sample_name} -t {args.n_threads} --ref {args.reference}"
     input_type = ""
@@ -39,11 +39,13 @@ def run_paa(input_list, sample_name, args):
             RUN_COMMAND += f" --sorted_bam {input_file}"
             input_type = "bam"
         elif (".fastq" in input_file) or (".fq" in input_file):
+            #print(f"input file is: {input_file}")
             input_type = "fastq"
             if "--fastqs" in RUN_COMMAND:
                 RUN_COMMAND += f" {input_file}"
             else:
                 RUN_COMMAND += f" --fastqs {input_file}"
+            print(f"FASTQ -- run command is: {RUN_COMMAND}")
         elif (".tar" in input_file) or ('.zip' in input_file):
             ## run AC, run script and stop code here.
             AA_results_location = run_ac_helper(input_file)
@@ -197,14 +199,15 @@ def get_sample_names(filepaths):
     """
 
     sample_names = set()
-
     for file in filepaths:
         sample_name = ''
         for ext in EXTENSIONS_LIST:
             if ext in file:
                 sample_name = os.path.basename(file).replace(ext, '')
+                break
         if sample_name != '':
             sample_names.add(sample_name)
+
 
     return list(sample_names)
 
@@ -234,7 +237,7 @@ def run_paa_per_sample(input_set, args):
     Given a set of input lists, run prepare AA on each sample
     """
     commands_to_run = []
-
+    print(f"run_paa_per_sample     input_set is: {input_set}")
     for sample in input_set.keys():
         command = run_paa(input_set[sample], sample, args)
         commands_to_run.append(command)
@@ -246,7 +249,7 @@ def run_paa_per_sample(input_set, args):
 ##  Start parsing arguments  ##
 ###############################
 if __name__ == "__main__":
-
+    print("==================== starting ==================")
     parser = argparse.ArgumentParser(description = 'Parse arguments for Amplicon Suite')
     parser.add_argument('--input',
                 help = 'Input File, can be BAM, Fastq files, or tar.gz',
@@ -364,7 +367,7 @@ if __name__ == "__main__":
                     filepaths.append(fp)
         return filepaths
                 
-
+    # print(f"   ===>>> input files are : {args.input}")
     all_filepaths = []
     for input in args.input:
         if ".txt" in input: 
@@ -374,9 +377,13 @@ if __name__ == "__main__":
             all_filepaths += filepaths
         else:
             all_filepaths.append(input)
-    
+
+
+    print(f"   ===>>> all filepaths are: {all_filepaths}")
     sample_name_list = get_sample_names(all_filepaths)
+    print(f"   ===>>> sample names are: {sample_name_list}")
     parameter_sets = create_parameter_sets(sample_name_list, all_filepaths)
+    print(f"   ===>>> parameter sets are: {parameter_sets}")
     AA_commands = run_paa_per_sample(parameter_sets, args)
 
 
