@@ -17,8 +17,8 @@ import pathlib
 global EXCLUSION_LIST
 EXCLUSION_LIST = ['.txt', '.bed', '.cns', '.out', '.pdf', '.log', '.stderr', '.json', '.tsv', '.cns.gz']
 global EXTENSIONS_LIST
-EXTENSIONS_LIST = ['.bam','R1_001.fastq.gz','R2_001.fastq.gz', '_R1.fastq', '_R2.fastq', '.R1.fastq.gz', '.R2.fastq.gz', '.zip', '.fq.gz', '1.fq.gz', '2.fq.gz', '.R1.fq.gz', '.R2.fq.gz', '1.fastq.gz', '2.fastq.gz', '.tar.gz']
-
+EXTENSIONS_LIST = ['.bam','_R1_001.fastq.gz','_R2_001.fastq.gz', '_R1.fastq', '_R2.fastq', '.R1.fastq.gz', '.R2.fastq.gz', '.zip', '.fq.gz', '1.fq.gz', '2.fq.gz', '.R1.fq.gz', '.R2.fq.gz', '1.fastq.gz', '2.fastq.gz', '.tar.gz']
+EXTENSIONS_LIST = sorted(EXTENSIONS_LIST, key=len, reverse=True) # Sort by length to match longer extensions first
 def run_paa(input_list, sample_name, args):
     """
     Runs Prepare AA.
@@ -39,7 +39,7 @@ def run_paa(input_list, sample_name, args):
             RUN_COMMAND += f" --sorted_bam {input_file}"
             input_type = "bam"
         elif (".fastq" in input_file) or (".fq" in input_file):
-            print(f"input file is: {input_file}")
+            #print(f"input file is: {input_file}")
             input_type = "fastq"
             if "--fastqs" in RUN_COMMAND:
                 RUN_COMMAND += f" {input_file}"
@@ -199,14 +199,15 @@ def get_sample_names(filepaths):
     """
 
     sample_names = set()
-
     for file in filepaths:
         sample_name = ''
         for ext in EXTENSIONS_LIST:
             if ext in file:
                 sample_name = os.path.basename(file).replace(ext, '')
+                break
         if sample_name != '':
             sample_names.add(sample_name)
+
 
     return list(sample_names)
 
@@ -366,7 +367,7 @@ if __name__ == "__main__":
                     filepaths.append(fp)
         return filepaths
                 
-    print(f"   ===>>> input files are : {args.input}")
+    # print(f"   ===>>> input files are : {args.input}")
     all_filepaths = []
     for input in args.input:
         if ".txt" in input: 
