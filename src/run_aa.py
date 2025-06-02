@@ -12,6 +12,7 @@ import shutil
 import tarfile
 import zipfile
 import json
+import sys
 import pathlib
 
 global EXCLUSION_LIST
@@ -34,29 +35,44 @@ def run_paa(input_list, sample_name, args):
 
     RUN_COMMAND = f"python3 /home/programs/AmpliconSuite-pipeline-master/PrepareAA.py -s {sample_name} -t {args.n_threads} --ref {args.reference}"
     input_type = ""
-    for input_file in input_list:
-        if ".bam" in input_file:
-            RUN_COMMAND += f" --sorted_bam {input_file}"
-            input_type = "bam"
-        elif (".fastq" in input_file) or (".fq" in input_file):
-            #print(f"input file is: {input_file}")
-            input_type = "fastq"
-            if "--fastqs" in RUN_COMMAND:
-                RUN_COMMAND += f" {input_file}"
-            else:
-                RUN_COMMAND += f" --fastqs {input_file}"
-            print(f"FASTQ -- run command is: {RUN_COMMAND}")
-        elif (".tar" in input_file) or ('.zip' in input_file):
-            ## run AC, run script and stop code here.
-            AA_results_location = run_ac_helper(input_file)
-            if AA_results_location != "AA_results folder not found":
-                RUN_COMMAND += f" --completed_AA_runs {AA_results_location} --cnvkit_dir /home/programs/cnvkit.py"
-                print(f'run command is: {RUN_COMMAND}')
-                return (RUN_COMMAND)
-                # os.system("bash /home/download_ref.sh " + args.reference + f" '{RUN_COMMAND}' {args.file_prefix}" )
-            else:
-                return "Invalid input."
+    # for input_file in input_list:
+    #     if ".bam" in input_file:
+    #         RUN_COMMAND += f" --sorted_bam {input_file}"
+    #         input_type = "bam"
+    #     elif (".fastq" in input_file) or (".fq" in input_file):
+    #         #print(f"input file is: {input_file}")
+    #         input_type = "fastq"
+    #         if "--fastqs" in RUN_COMMAND:
+    #             RUN_COMMAND += f" {input_file}"
+    #         else:
+    #             RUN_COMMAND += f" --fastqs {input_file}"
+    #         print(f"FASTQ -- run command is: {RUN_COMMAND}")
+    #     elif (".tar" in input_file) or ('.zip' in input_file):
+    #         ## run AC, run script and stop code here.
+    #         AA_results_location = run_ac_helper(input_file)
+    #         if AA_results_location != "AA_results folder not found":
+    #             RUN_COMMAND += f" --completed_AA_runs {AA_results_location} --cnvkit_dir /home/programs/cnvkit.py"
+    #             print(f'run command is: {RUN_COMMAND}')
+    #             return (RUN_COMMAND)
+    #             # os.system("bash /home/download_ref.sh " + args.reference + f" '{RUN_COMMAND}' {args.file_prefix}" )
+    #         else:
+    #             return "Invalid input."
             
+    if args.bam:
+        RUN_COMMAND += f" --sorted_bam {args.bam}"
+        input_type = "bam"
+    elif (args.fastq1 and args.fastq2):
+        RUN_COMMAND += f" --fastqs {args.fastq1} {args.fastq2}"
+        input_type = "fastq"
+    elif args.aazipped:
+        ## run AC, run script and stop code here.
+        AA_results_location = run_ac_helper(args.aazipped)
+        if AA_results_location != "AA_results folder not found":
+            RUN_COMMAND += f" --completed_AA_runs {AA_results_location} --cnvkit_dir /home/programs/cnvkit.py"
+            print(f'run command is: {RUN_COMMAND}')
+            return (RUN_COMMAND)
+        else:
+            return "Invalid input."
 
     if args.RUN_AA == "Yes":
         RUN_COMMAND += " --run_AA"
@@ -190,26 +206,35 @@ def metadata_helper(args):
     json_file.close()
 
 
-def get_sample_names(filepaths):
+def get_sample_name(aazipped, bam, fastq1, fastq2):
     """
     Gets a unique set of sample names from the inputs
     python3 src/run_aa.py --input /directory/to/the/file/FF12.R1.fastq.gz /directory/to/the/file/FF12.R2.fastq.gz /directory/to/the/file/FF13.bam /directory/to/the/file/FF15.R.bam
 
     /directory/to/the/file/
     """
+    def extract_name(filepath, extensions):
+        for ext in extensions:
+            if filepath.endswith(ext):
+                return os.path.basename(filepath).replace(ext, '')
+        return os.path.basename(filepath)
 
-    sample_names = set()
-    for file in filepaths:
-        sample_name = ''
-        for ext in EXTENSIONS_LIST:
-            if ext in file:
-                sample_name = os.path.basename(file).replace(ext, '')
+    if aazipped:
+        return extract_name(aazipped, ['.zip', '.tar.gz'])
+    if bam:
+        return extract_name(bam, ['.bam'])
+    if fastq1 and fastq2:
+        # Find the common prefix between fastq1 and fastq2
+        common_prefix = []
+        for c1, c2 in zip(fastq1, fastq2):
+            if c1 == c2:
+                common_prefix.append(c1)
+            else:
                 break
-        if sample_name != '':
-            sample_names.add(sample_name)
-
-
-    return list(sample_names)
+        return ''.join(common_prefix).rstrip('_')
+    if fastq1:
+        return extract_name(fastq1, ['.fastq', '.fq', '.fastq.gz', '.fq.gz'])
+    return 'sample'
 
 def create_parameter_sets(sample_names, filepaths):
     """
@@ -250,11 +275,21 @@ def run_paa_per_sample(input_set, args):
 ###############################
 if __name__ == "__main__":
     print("==================== starting ==================")
+    print("Command line called:")
+    print(' '.join(sys.argv))
+    print("====================  ==================")
     parser = argparse.ArgumentParser(description = 'Parse arguments for Amplicon Suite')
-    parser.add_argument('--input',
-                help = 'Input File, can be BAM, Fastq files, or tar.gz',
-                required = True,
-                nargs = "+")
+    #parser.add_argument('--input',
+    #            help = 'Input File, can be BAM, Fastq files, or tar.gz',
+    #            required = True,
+    #            nargs = "+")
+    parser.add_argument('--aazipped',
+                        help='Zipped AA output file',
+                        required=False)
+    parser.add_argument('--bam', help="Path to a bam input (optional)")
+    parser.add_argument('--fastq1', help="Path to a fastq 1 input (optional)")
+    parser.add_argument('--fastq2', help="Path to a fastq 2 input (optional)")
+
     parser.add_argument('--n_threads', help = 'number of threads to use for AA')
     parser.add_argument('--reference', help = 'Reference genome to use',
                 choices = ['hg19', 'GRCh37', 'GRCh38','mm10', 'GRCh38_viral'])
@@ -355,32 +390,42 @@ if __name__ == "__main__":
     #             sample_name = os.path.basename(input_list[0]).replace(ext, '')
     #     AA_commands = [run_paa(input_list, sample_name, args)]
 
-    def read_filelist(fp):
-        """
-        Reads the filelist.txt and returns a list of filepaths. 
-        """
-        filepaths = []
-        with open(fp, 'r') as file:
-            for line in file.readlines():
-                fp = line.strip()
-                if fp != '':
-                    filepaths.append(fp)
-        return filepaths
-                
-    # print(f"   ===>>> input files are : {args.input}")
+    # def read_filelist(fp):
+    #     """
+    #     Reads the filelist.txt and returns a list of filepaths.
+    #     """
+    #     filepaths = []
+    #     with open(fp, 'r') as file:
+    #         for line in file.readlines():
+    #             fp = line.strip()
+    #             if fp != '':
+    #                 filepaths.append(fp)
+    #     return filepaths
+    #
+    # # print(f"   ===>>> input files are : {args.input}")
+    # all_filepaths = []
+    # for input in args.input:
+    #     if ".txt" in input:
+    #         ## most likely a filelist
+    #         ## get the list of filepaths from it
+    #         filepaths = read_filelist(input)
+    #         all_filepaths += filepaths
+    #     else:
+    #         all_filepaths.append(input)
     all_filepaths = []
-    for input in args.input:
-        if ".txt" in input: 
-            ## most likely a filelist
-            ## get the list of filepaths from it
-            filepaths = read_filelist(input)
-            all_filepaths += filepaths
-        else:
-            all_filepaths.append(input)
+    if args.aazipped:
+        all_filepaths.append( args.aazipped    )
+    if args.bam:
+        all_filepaths.append(args.bam)
+    if args.fastq1:
+        all_filepaths.append(args.fastq1)
+    if args.fastq2:
+        all_filepaths.append(args.fastq2)
 
 
     print(f"   ===>>> all filepaths are: {all_filepaths}")
-    sample_name_list = get_sample_names(all_filepaths)
+    sample_name_list = get_sample_name(args.aazipped, args.bam, args.fastq1, args.fastq2)
+
     print(f"   ===>>> sample names are: {sample_name_list}")
     parameter_sets = create_parameter_sets(sample_name_list, all_filepaths)
     print(f"   ===>>> parameter sets are: {parameter_sets}")
