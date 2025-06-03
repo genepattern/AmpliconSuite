@@ -67,9 +67,6 @@ fi
 
 # ls /home > $PWD/output/docker_home_manifest.log
 
-#works for py2 and py3, check if NCM works
-python $NCM_HOME/ncm.py -h >> $PWD/output/docker_home_manifest.log
-
 
 echo "###############################"
 echo RUNNING $RUN_COMMAND
@@ -93,6 +90,6 @@ fi
 echo -e "\n"
 echo -e "\n"
 # ls -alrt
-tar --exclude="./programs" --exclude="./testdata" --exclude="./input" --exclude="./output" --exclude="*.bam" -zcvf ${SAMPLE_NAME}_outputs.tar.gz .
+tar --exclude="./programs" --exclude="./testdata" --exclude="./input" --exclude="./output" --exclude="*.bam" --exclude="*.fastq*" --exclude="*.fq*" -zcvf ${SAMPLE_NAME}_outputs.tar.gz .
 
 echo Finished Running
