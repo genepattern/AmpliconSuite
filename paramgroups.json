@@ -34,7 +34,7 @@
         "description": "",
         "hidden": false,
         "parameters": [
-            "Output.File.Prefix",
+            "Sample.Name",
             "RUN.AA",
             "RUN.AC",
             "minimal.outputs",
@@ -58,6 +58,7 @@
             "AA.runmode",
             "AA.extend.mode",
             "AA.std.of.insert.size",
+            "foldback.pair.support.min",
             "no.filter",
             "skip.QC",
             "ploidy",
@@ -73,10 +74,6 @@
             "sample_type",
             "sample_source",
             "tissue_of_origin",
-            "reference_genome",
-            "run_metadata_file",
-            "number_of_AA_amplicons",
-            "number_of_AA_features",
             "sample_description"
         ]
     },

@@ -89,6 +89,9 @@ def run_paa_single_sample(args):
     if args.AA_insert_sdevs:
         RUN_COMMAND += f" --AA_insert_sdevs {args.AA_insert_sdevs}"
     
+    if args.foldback_pair_support_min:
+        RUN_COMMAND += f" --foldback_pair_support_min {args.foldback_pair_support_min}"
+    
     if args.downsample: 
         RUN_COMMAND += f" --downsample {args.downsample}"
 
@@ -247,7 +250,10 @@ if __name__ == "__main__":
                        help='AA extendmode argument')
     parser.add_argument('--AA_insert_sdevs', type=float, default=3.0,
                        help='Number of standard deviations around the insert size')
-
+    
+    parser.add_argument('--foldback_pair_support_min', type=int, default=2,
+                   help='Minimum number of read pairs to support a foldback event')
+    
     # Additional input files
     parser.add_argument('--normal_bam',
                        help='Path to a matched normal bam for CNVKit (optional)')
