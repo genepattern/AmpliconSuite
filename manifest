@@ -372,19 +372,19 @@ p34_prefix_when_specified=--project_uuid
 p34_type=java.lang.String
 p34_value=
 
-p34_MODE=
-p34_TYPE=TEXT
-p34_default_value=
-p34_description=Project key on ampliconrepository.org, found under the key icon on the project page for project owners.
-p34_fileFormat=
-p34_flag=   
-p34_name=project.key
-p34_numValues=0..1
-p34_optional=on
-p34_prefix=
-p34_prefix_when_specified=--project_key       
-p34_type=java.lang.String
-p34_value=
+p9_MODE=
+p9_TYPE=TEXT
+p9_default_value=
+p9_description=Project key on ampliconrepository.org, found under the key icon on the project page for project owners.
+p9_fileFormat=
+p9_flag=   
+p9_name=project.key
+p9_numValues=0..1
+p9_optional=on
+p9_prefix=
+p9_prefix_when_specified=--project_key       
+p9_type=java.lang.String
+p9_value=
 
 
 p3_MODE=IN
@@ -439,45 +439,33 @@ p6_prefix=
 p6_prefix_when_specified=
 p6_type=java.lang.String
 p6_value=Yes\=Yes;No\=No
+
 p7_MODE=
 p7_TYPE=TEXT
-p7_default_value=No
-p7_description=If "Yes", will only output PNGs. If "No", will give full outputs. Default is "No", assuming users want full results.
+p7_default_value=GRCh38
+p7_description=Reference genome. Please use drop down to select. 
 p7_fileFormat=
-p7_flag=--min_outputs 
-p7_name=minimal.outputs
+p7_flag=--ref 
+p7_name=reference
 p7_numValues=0..1
 p7_optional=
 p7_prefix=
 p7_prefix_when_specified=
 p7_type=java.lang.String
-p7_value=Yes\=Yes;No\=No
+p7_value=hg19\=hg19;GRCh37\=GRCh37;GRCh38\=GRCh38;mm10\=mm10;GRCh38_viral\=GRCh38_viral
 p8_MODE=
 p8_TYPE=TEXT
-p8_default_value=GRCh38
-p8_description=Reference genome. Please use drop down to select. 
+p8_default_value=none
+p8_description=Segmentation method for CNVKit (if used), defaults to CNVKit default segmentation method (cbs). Use drop down menu to select. 
 p8_fileFormat=
-p8_flag=--ref 
-p8_name=reference
+p8_flag=--cnvkit_segmentation 
+p8_name=cnvkit.segmentation
 p8_numValues=0..1
-p8_optional=
-p8_prefix=
-p8_prefix_when_specified=
+p8_optional=on
+p8_prefix=--cnvkit_segmentation 
+p8_prefix_when_specified=--cnvkit_segmentation 
 p8_type=java.lang.String
-p8_value=hg19\=hg19;GRCh37\=GRCh37;GRCh38\=GRCh38;mm10\=mm10;GRCh38_viral\=GRCh38_viral
-p9_MODE=
-p9_TYPE=TEXT
-p9_default_value=none
-p9_description=Segmentation method for CNVKit (if used), defaults to CNVKit default segmentation method (cbs). Use drop down menu to select. 
-p9_fileFormat=
-p9_flag=--cnvkit_segmentation 
-p9_name=cnvkit.segmentation
-p9_numValues=0..1
-p9_optional=on
-p9_prefix=--cnvkit_segmentation 
-p9_prefix_when_specified=--cnvkit_segmentation 
-p9_type=java.lang.String
-p9_value=cbs\=cbs;haar\=haar;hmm\=hmm;hmm-tumor\=hmm-tumor;hmm-germline\=hmm-germline;none\=none
+p8_value=cbs\=cbs;haar\=haar;hmm\=hmm;hmm-tumor\=hmm-tumor;hmm-germline\=hmm-germline;none\=none
 privacy=public
 publicationDate=01/17/2024 17\:02 
 quality=production

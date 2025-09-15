@@ -174,24 +174,6 @@ def metadata_helper(args):
         json.dump(json_obj, json_file, indent=4)
 
 
-def cleanup_outputs():
-    """
-    Clean up outputs if minimal output is requested
-    """
-    EXCLUSION_LIST = ['.txt', '.bed', '.cns', '.out', '.pdf', '.log', '.stderr', '.json', '.tsv', '.cns.gz']
-    
-    print('Reducing the amount of files outputted')
-    for root, dirs, files in os.walk('.'):
-        for name in files:
-            fp = os.path.join(root, name)
-            extension = os.path.splitext(fp)[-1]
-            if extension in EXCLUSION_LIST:
-                print('Removing: ' + fp)
-                try:
-                    os.remove(fp)
-                except OSError as e:
-                    print(f"Error removing {fp}: {e}")
-
 
 ###############################
 ##  Start parsing arguments  ##
@@ -274,8 +256,7 @@ if __name__ == "__main__":
     # Reference and output options
     parser.add_argument('--ref_path', default="None",
                        help="Path to reference Genome, won't download if provided")
-    parser.add_argument('--min_outputs', choices=['Yes', 'No'], default='No',
-                       help="Minimize the amount of outputs")
+   
 
     # Mosek license options
     parser.add_argument('--mosek_server_license', 
@@ -328,9 +309,7 @@ if __name__ == "__main__":
             print(f"Command failed with exit code: {result}")
             exit(1)
         
-        # Clean up outputs if requested
-        if args.min_outputs == "Yes":
-            cleanup_outputs()
+       
             
         print('Process finished successfully')
         
