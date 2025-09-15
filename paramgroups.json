@@ -78,6 +78,17 @@
         ]
     },
     {
+        "name": "Amplicon Repository Upload",
+        "description": "To automatically upload the results to amplicontrpository.org, adding them to an existing project.  You must be a project member to upload to that project.",
+        "hidden": false,
+        "parameters": [
+            "upload.to.amplicon.repository",
+            "amplicon.repository.username",
+            "project.uuid",
+            "project.key"
+        ]
+    },
+    {
         "name": "Job Options: Set to higher limit if running data that is >10x coverage."
     }
 ]

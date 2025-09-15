@@ -19,7 +19,7 @@ def run_paa_single_sample(args):
     """
     print(f"Running PrepareAA for sample: {args.file_prefix}")
 
-    RUN_COMMAND = f"python3 /home/programs/AmpliconSuite-pipeline-master/PrepareAA.py -s {args.file_prefix} -t {args.n_threads} --ref {args.reference}"
+    RUN_COMMAND = f"python3 /home/programs/AmpliconSuite-pipeline-master/AmpliconSuite-pipeline.py -s {args.file_prefix} -t {args.n_threads} --ref {args.reference}"
     input_type = ""
 
     # Handle different input types
@@ -106,6 +106,9 @@ def run_paa_single_sample(args):
 
     if (args.cnsize_min != 50000) and (args.cnsize_min > 0):
         RUN_COMMAND += f" --cnsize_min {args.cnsize_min}"
+
+    if args.upload:
+        RUN_COMMAND += f" --project_uuid {args.project_uuid}  --project_key {args.project_key} --username {args.username}  --upload"
 
     # Set AA_SEED environment variable
     os.environ['AA_SEED'] = str(args.AA_seed)
@@ -292,7 +295,11 @@ if __name__ == "__main__":
     parser.add_argument('--metadata_number_of_AA_amplicons')
     parser.add_argument('--metadata_number_of_AA_features')
     parser.add_argument('--metadata_sample_description')
-
+    parser.add_argument('--upload')
+    parser.add_argument('--project_uuid')
+    parser.add_argument('--project_key')
+    parser.add_argument('--username')
+    
     args = parser.parse_args()
     print(f"Using arguments: {args}")
 
