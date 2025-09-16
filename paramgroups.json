@@ -80,12 +80,13 @@
     {
         "name": "Amplicon Repository Upload",
         "description": "To automatically upload the results to amplicontrpository.org, adding them to an existing project.  You must be a project member to upload to that project.",
-        "hidden": false,
+        "hidden": true,
         "parameters": [
             "upload.to.amplicon.repository",
             "amplicon.repository.username",
             "project.uuid",
-            "project.key"
+            "project.key",
+            "upload.server"
         ]
     },
     {

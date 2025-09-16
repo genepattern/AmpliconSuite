@@ -12,6 +12,7 @@ import zipfile
 import json
 import pathlib
 import sys
+import uuid
 
 def run_paa_single_sample(args):
     """
@@ -108,7 +109,7 @@ def run_paa_single_sample(args):
         RUN_COMMAND += f" --cnsize_min {args.cnsize_min}"
 
     if args.upload:
-        RUN_COMMAND += f" --project_uuid {args.project_uuid}  --project_key {args.project_key} --username {args.username}  --upload"
+        RUN_COMMAND += f" --upload  --project_uuid {args.project_uuid}  --project_key {args.project_key} --username {args.username} --upload_server {args.upload_server} "
 
     # Set AA_SEED environment variable
     os.environ['AA_SEED'] = str(args.AA_seed)
@@ -276,7 +277,10 @@ if __name__ == "__main__":
     parser.add_argument('--metadata_number_of_AA_amplicons')
     parser.add_argument('--metadata_number_of_AA_features')
     parser.add_argument('--metadata_sample_description')
-    parser.add_argument('--upload')
+    parser.add_argument('--upload', action='store_true', help='Enable upload mode')
+    parser.add_argument('--upload_server', choices=['prod', 'dev', 'local'], default='prod',
+                        help='Upload server: prod, dev, or local')
+
     parser.add_argument('--project_uuid')
     parser.add_argument('--project_key')
     parser.add_argument('--username')
@@ -287,6 +291,26 @@ if __name__ == "__main__":
     # Handle reference genome alias
     if args.reference == 'hg38':
         args.reference = "GRCh38"
+
+    if args.upload:
+        missing = []
+        if not args.username:
+            missing.append('--username')
+        if not args.project_uuid:
+            missing.append('--project_uuid')
+        if not args.project_key:
+            missing.append('--project_key')
+        if missing:
+            print(f"Error: --upload requires {', '.join(missing)} to be provided.")
+            exit(1)
+        # Validate UUIDs
+        for name in ['project_key']:
+            value = getattr(args, name)
+            try:
+                uuid.UUID(value)
+            except Exception:
+                print(f"Error: --{name} must be a valid UUID.")
+                exit(1)
 
     # Set mosek path
     if args.mosek_license_file:

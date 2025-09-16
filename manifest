@@ -4,12 +4,12 @@ JVMLevel=
 LSID=urn\:lsid\:genepattern.org\:module.analysis\:00427\:37.1
 author=Edwin Huang;Mesirov Lab
 categories=ecdna
-commandLine=python3 /opt/genepatt/run_aa.py  <AA_zipped_output> <bam.file> <fastq.r1> <fastq.r2> --n_threads <job.cpuCount>  <no.filter>  <skip.QC>  <VCF.no.filter> --reference <reference> --file_prefix <Sample.Name> --RUN_AA <RUN.AA> --RUN_AC <RUN.AC> --min_outputs  <minimal.outputs>  <ploidy>  <purity>  <cnvkit.segmentation>  <AA.seed>  <CN.gain>  <Minimum.copy.number.size>   <Downsample.Argument>  <AA.runmode>  <AA.extend.mode>  <AA.std.of.insert.size>  <cnv.bed>  <normal_bam>  <VCF.file>   <sample_metadata>  <sample_type>  <tissue_of_origin>  <sample_description>    <sample_source>   <foldback.pair.support.min> <project.uuid> <project.key> <amplicon.repository.username> <upload.to.amplicon.repository> --mosek_server_license <mosek_server_license>  
+commandLine=python3 /opt/genepatt/run_aa.py  <AA_zipped_output> <bam.file> <fastq.r1> <fastq.r2> --n_threads <job.cpuCount>  <no.filter>  <skip.QC>  <VCF.no.filter> --reference <reference> --file_prefix <Sample.Name> --RUN_AA <RUN.AA> --RUN_AC <RUN.AC>  <ploidy>  <purity>  <cnvkit.segmentation>  <AA.seed>  <CN.gain>  <Minimum.copy.number.size>   <Downsample.Argument>  <AA.runmode>  <AA.extend.mode>  <AA.std.of.insert.size>  <cnv.bed>  <normal_bam>  <VCF.file>   <sample_metadata>  <sample_type>  <tissue_of_origin>  <sample_description>    <sample_source>   <foldback.pair.support.min> <upload.to.amplicon.repository> <project.uuid> <project.key> <amplicon.repository.username>  <upload.server>  --mosek_server_license <mosek_server_license>  
 cpuType=any
 description=A multithread-enabled quickstart tool for AmpliconArchitect. Performs all preliminary steps (alignment, CNV calling, seed interval detection) required prior to running AmpliconArchitect. PrepareAA supports hg19 (or GRCh37), hg38 as well as mouse genome mm10 (or GRCm38). PrepareAA can also be invoked to start at intermediate stages of the data preparation process.\n<br>\nAll credits go to\: <a href="https://github.com/AmpliconSuite/AmpliconSuite-pipeline">https://github.com/AmpliconSuite/AmpliconSuite-pipeline</a> \n<br>\nView licenses here\: <a href\="https\://github.com/genepattern/AmpliconSuite\#licenses">https\://github.com/genepattern/AmpliconSuite\#licenses</a>\n<br/>\n<p>\nTo increase your GenePattern disk space quote so you can more easily upload the input bam files, <b><a href\="https\://forms.gle/23tkh98vwkhtCeKM7">click here to join the AmpliconSuiteUsers group on this server.</b> </a> </p>\n \nTo run multiple samples at once, simply drag and drop multiple samples into the input options. There is no need to check the "Batch" box. \n\n<br>\nCurrently using Amplicon Suite version 1.3.8. 
 documentationUrl=https://github.com/AmpliconSuite/AmpliconSuite-pipeline
 fileFormat=
-job.docker.image=genepattern/amplicon-architect\:v3.11.4
+job.docker.image=genepattern/amplicon-architect\:v3.12.0
 language=any
 name=AmpliconSuite
 os=any
@@ -386,6 +386,19 @@ p9_prefix_when_specified=--project_key
 p9_type=java.lang.String
 p9_value=
 
+p35_MODE=
+p35_TYPE=TEXT
+p35_default_value=prod
+p35_description=Developer only argument for which server to upload to. Allowed calues are prod, dev and local
+p35_fileFormat=
+p35_flag=   
+p35_name=upload.server
+p35_numValues=1..1
+p35_optional=
+p35_prefix=
+p35_prefix_when_specified=--upload_server   
+p35_type=java.lang.String
+p35_value=prod;dev;local
 
 p3_MODE=IN
 p3_TYPE=FILE

@@ -16,6 +16,7 @@ RUN chmod -R 777 /opt/genepatt/extracted
 RUN chmod -R 777 /home/*
 RUN chmod -R 777 /home/aa_user/
 
+RUN apt-get update && apt-get install -y curl
 
 # Copy local mosek.lic file, for testing only
 # COPY src/mosek.lic /home/mosek/
