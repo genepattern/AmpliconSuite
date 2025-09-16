@@ -84,7 +84,7 @@
         "parameters": [
             "upload.to.amplicon.repository",
             "amplicon.repository.username",
-            "project.uuid",
+            "project.id",
             "project.key",
             "upload.server"
         ]
