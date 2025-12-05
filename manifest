@@ -13,6 +13,7 @@ job.docker.image=genepattern/amplicon-architect\:v3.13.0
 language=any
 name=AmpliconSuite
 os=any
+job.memory=30 Gb
 p10_MODE=IN
 p10_TYPE=FILE
 p10_default_value=
@@ -468,7 +469,7 @@ p7_type=java.lang.String
 p7_value=hg19\=hg19;GRCh37\=GRCh37;GRCh38\=GRCh38;mm10\=mm10;GRCh38_viral\=GRCh38_viral
 p8_MODE=
 p8_TYPE=TEXT
-p8_default_value=none
+p8_default_value=cbs
 p8_description=Segmentation method for CNVKit (if used), defaults to CNVKit default segmentation method (cbs). Use drop down menu to select. 
 p8_fileFormat=
 p8_flag=--cnvkit_segmentation 
